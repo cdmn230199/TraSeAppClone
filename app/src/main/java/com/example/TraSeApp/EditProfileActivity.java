@@ -100,7 +100,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             case R.id.iv_AvaEdit:
                 CropImage.activity()
                         .setAspectRatio(1, 1)
-                        .setCropShape(CropImageView.CropShape.OVAL)
                         .start(EditProfileActivity.this);
                 break;
         }
@@ -152,7 +151,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                 .child(firebaseUser.getUid());
 
                         HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("imageurl", ""+myURL);
+                        hashMap.put("imgUrl", ""+myURL);
 
                         reference.updateChildren(hashMap);
                         pd.dismiss();
