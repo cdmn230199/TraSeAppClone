@@ -2,7 +2,9 @@ package com.example.TraSeApp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -68,8 +70,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
         binding.btnLogIn.setOnClickListener(this);
-        binding.btnFacebook.setOnClickListener(this);
-        binding.btnGmail.setOnClickListener(this);
+
         binding.tvSignUp.setOnClickListener(this);
 
 
@@ -110,14 +111,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.btnLogIn:
                 handleSignIn();
-                break;
-
-            case R.id.btnFacebook:
-                signInWithFB();
-                break;
-
-            case R.id.btnGmail:
-
+                saveProfileId(this, "profileid", firebaseUser.getUid());
                 break;
 
         }
@@ -236,6 +230,11 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     public void gotoMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    public  static void saveProfileId (Context context, String key, String value){
+        SharedPreferences sp2 = context.getSharedPreferences("caches", Context.MODE_PRIVATE);
+        sp2.edit().putString(key,value).apply();
     }
 
 }

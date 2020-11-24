@@ -1,7 +1,7 @@
 package com.example.TraSeApp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.TraSeApp.CommentsActivity;
 import com.example.TraSeApp.R;
+import com.example.TraSeApp.fragments.ProfileFrag;
 import com.example.TraSeApp.model.Post;
 import com.example.TraSeApp.model.User;
+import com.facebook.share.Share;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -70,9 +72,43 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         }
 
         getPublisherInfo(holder.avt, holder.tv_username, post.getPublisher()); // Get avt, get username, get id publisher
-        isLiked(post.getPostid(), holder.img_btn_like); // Check like or not
-        nrLikes(holder.tv_like_counter, post.getPostid()); // Like counters
-        getCmtsCount(post.getPostid(),holder.tv_cmt_counter);
+        isLiked(post.getPostid(), holder.img_btn_like);
+        nrLikes(holder.tv_like_counter, post.getPostid());
+
+        holder.avt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+        holder.iv_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+        holder.tv_username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+
 
         holder.img_btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,16 +124,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             .child(post.getPostid())
                             .child(firebaseUser.getUid()).removeValue();
                 }
-            }
-        });
-
-        holder.img_btn_comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, CommentsActivity.class);
-                intent.putExtra("postid", post.getPostid());
-                intent.putExtra("publisherid", post.getPublisher());
-                mContext.startActivity(intent);
             }
         });
 
@@ -144,6 +170,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         .placeholder(R.drawable.tokuda)
                         .into(image_profile);
 
+
                 username.setText(user.getUsername());
 
             }
@@ -153,24 +180,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
-    }
-
-    // GET CMT FROM DATABASE
-    private void getCmtsCount(String postid , final TextView tv_cmt_counter) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                tv_cmt_counter.setText(snapshot.getChildrenCount()+" comments");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
     }
 
     // Set Event For Button Like + Check like or not by firebase database + set Tag For button like
@@ -215,7 +224,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
-
-
 }
 
