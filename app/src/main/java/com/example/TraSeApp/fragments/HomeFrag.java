@@ -1,5 +1,6 @@
 package com.example.TraSeApp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.example.TraSeApp.MessageActivity;
 import com.example.TraSeApp.R;
 import com.example.TraSeApp.adapter.PostAdapter;
 import com.example.TraSeApp.model.Post;
@@ -31,6 +34,8 @@ public class HomeFrag extends Fragment {
     private RecyclerView rv_posts;
     private List<Post> list;
     private List<String> followingList;
+    ImageView iv_goto_mess;
+
     PostAdapter postAdapter;
 
 
@@ -51,11 +56,19 @@ public class HomeFrag extends Fragment {
 
         initView(view);
 
+        iv_goto_mess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), MessageActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
 
     private void initView(View view) {
+        iv_goto_mess = view.findViewById(R.id.iv_goto_mess);
 
         rv_posts = view.findViewById(R.id.rv_posts);
         rv_posts.setHasFixedSize(true);

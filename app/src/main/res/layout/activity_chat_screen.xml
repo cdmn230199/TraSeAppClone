@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.SearchFrag">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chat_screen_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="2dp"
+        android:background="@color/blueSky"
+        android:elevation="2dp">
+
+
+       <de.hdodenhof.circleimageview.CircleImageView
+           android:id="@+id/avt_chat_screen"
+           android:layout_width="wrap_content"
+           android:src="@drawable/ic_person_64x64"
+           android:layout_height="wrap_content">
+       </de.hdodenhof.circleimageview.CircleImageView>
+
+        <TextView
+            android:layout_marginLeft="@dimen/constanSize5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_username_chat_screen"
+            android:maxLines="1"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:text="ToKuda"
+            android:textColor="@color/black"/>
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+</RelativeLayout>
