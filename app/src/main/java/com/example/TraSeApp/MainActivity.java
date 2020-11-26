@@ -3,6 +3,8 @@ package com.example.TraSeApp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.TraSeApp.adapter.ViewPagerHomeAdapter;
@@ -23,14 +25,15 @@ public class MainActivity extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         init();
         addTabs();
+        saveProfileId(this, "profileid", firebaseUser.getUid());
     }
 
-    private void init() {
+    public void init() {
         viewPager = findViewById(R.id.vp_story);
         tabLayout = findViewById(R.id.tab_story);
     }
 
-    private void addTabs() {
+    public void addTabs() {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_find_no_fill));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add_no_fill));
@@ -104,4 +107,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    public  static void saveProfileId (Context context, String key, String value){
+        SharedPreferences sp2 = context.getSharedPreferences("caches", Context.MODE_PRIVATE);
+        sp2.edit().putString(key,value).apply();
+    }
+
 }

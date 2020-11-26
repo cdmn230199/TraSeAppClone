@@ -18,6 +18,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.TraSeApp.databinding.ActivityEditProfileBinding;
@@ -81,6 +82,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         binding.tvChangeAva.setOnClickListener(this);
         binding.ivTick.setOnClickListener(this);
         binding.ivAvaEdit.setOnClickListener(this);
+
 
 
     }

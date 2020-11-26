@@ -1,7 +1,7 @@
 package com.example.TraSeApp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.TraSeApp.CommentsActivity;
 import com.example.TraSeApp.R;
+import com.example.TraSeApp.fragments.ProfileFrag;
 import com.example.TraSeApp.model.Post;
 import com.example.TraSeApp.model.User;
+import com.facebook.share.Share;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,32 +27,43 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import org.w3c.dom.Text;
+
 import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+
     public Context mContext;
     public List<Post> mPost;
+
     public FirebaseUser firebaseUser;
+
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_items, parent, false);
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPost.get(position);
+
         Glide.with(mContext.getApplicationContext())
                 .load(post.getPostimage())
                 .timeout(5000)
                 .placeholder(R.drawable.ic_person_64x64)
                 .into(holder.iv_post);
+
         if (post.getDescription().equals("")) {
             holder.tv_description.setVisibility(View.GONE);
         } else {
@@ -60,9 +74,41 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         getPublisherInfo(holder.avt, holder.tv_username, post.getPublisher()); // Get avt, get username, get id publisher
         isLiked(post.getPostid(), holder.img_btn_like);
         nrLikes(holder.tv_like_counter, post.getPostid());
-        isLiked(post.getPostid(), holder.img_btn_like); // Check like or not
-        nrLikes(holder.tv_like_counter, post.getPostid()); // Like counters
-        getCmtsCount(post.getPostid(),holder.tv_cmt_counter);
+
+        holder.avt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+        holder.iv_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+        holder.tv_username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("caches", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", post.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, new ProfileFrag()).commit();
+            }
+        });
+
+
 
         holder.img_btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,29 +127,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
-        holder.img_btn_comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, CommentsActivity.class);
-                intent.putExtra("postid", post.getPostid());
-                intent.putExtra("publisherid", post.getPublisher());
-                mContext.startActivity(intent);
-            }
-        });
-
     }
 
     @Override
     public int getItemCount() {
         return mPost.size();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         private CircleImageView avt;
         private TextView tv_username, tv_time, tv_like_counter, tv_cmt_counter, tv_description;
         private ImageView iv_post;
         private ImageButton img_btn_like, img_btn_comment, img_btn_share;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             avt = itemView.findViewById(R.id.avt);
             tv_username = itemView.findViewById(R.id.tv_username);
             tv_time = itemView.findViewById(R.id.tv_time);
@@ -115,9 +155,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tv_description = itemView.findViewById(R.id.tv_description);
         }
     }
+
     private void getPublisherInfo(final CircleImageView image_profile, final TextView username, final String userid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(userid);
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -132,34 +174,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 username.setText(user.getUsername());
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    // GET CMT FROM DATABASE
-    private void getCmtsCount(String postid , final TextView tv_cmt_counter) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                tv_cmt_counter.setText(snapshot.getChildrenCount()+" comments");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
     }
 
     // Set Event For Button Like + Check like or not by firebase database + set Tag For button like
     private void isLiked(final String postid, final ImageView imageView) {
 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Likes").child(postid);
         reference.addValueEventListener(new ValueEventListener() {
@@ -173,11 +200,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     imageView.setTag("like");
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
+
+
     // Dem Like Cho TextView Likes
     private void nrLikes(final TextView likes, String postId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postId);
@@ -186,9 +217,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 likes.setText(dataSnapshot.getChildrenCount() + " likes");
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
 }
+
