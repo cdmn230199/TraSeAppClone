@@ -13,5 +13,5 @@
     <dimen name="constant10">10dp</dimen>
     <dimen name="constant150">150</dimen>
 
-    <dimen name="avatarSize">60dp</dimen>
+    <dimen name="avatarSize">45dp</dimen>
 </resources>

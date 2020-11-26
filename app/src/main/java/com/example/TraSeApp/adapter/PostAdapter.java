@@ -106,7 +106,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             super(itemView);
             avt = itemView.findViewById(R.id.avt);
             tv_username = itemView.findViewById(R.id.tv_username);
-            tv_time = itemView.findViewById(R.id.tv_time);
             tv_like_counter = itemView.findViewById(R.id.tv_like_counter);
             iv_post = itemView.findViewById(R.id.iv_post);
             img_btn_like = itemView.findViewById(R.id.img_btn_like);
