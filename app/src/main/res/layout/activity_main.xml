@@ -12,7 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/frament_container"/>
+        android:id="@+id/fragment_container"/>
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
@@ -27,6 +27,5 @@
         android:background="#E4E2E2"
         app:tabIndicatorAnimationDuration="@android:integer/config_mediumAnimTime"
         android:layout_alignParentBottom="true" />
-
 
 </RelativeLayout>
